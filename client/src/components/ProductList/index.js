@@ -1,35 +1,46 @@
 import React, { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import ProductItem from '../ProductItem';
 import { useStoreContext } from '../../utils/GlobalState';
 import { UPDATE_PRODUCTS } from '../../utils/actions';
-
-import ProductItem from '../ProductItem';
+import { useQuery } from '@apollo/client';
 import { QUERY_PRODUCTS } from '../../utils/queries';
+import { idbPromise } from '../../utils/helpers';
 import spinner from '../../assets/spinner.gif';
 
 function ProductList() {
   const [state, dispatch] = useStoreContext();
 
   const { currentCategory } = state;
-  
+
   const { loading, data } = useQuery(QUERY_PRODUCTS);
-  
+
   useEffect(() => {
     if (data) {
       dispatch({
         type: UPDATE_PRODUCTS,
-        products: data.products
+        products: data.products,
+      });
+      data.products.forEach((product) => {
+        idbPromise('products', 'put', product);
+      });
+    } else if (!loading) {
+      idbPromise('products', 'get').then((products) => {
+        dispatch({
+          type: UPDATE_PRODUCTS,
+          products: products,
+        });
       });
     }
-  }, [data, dispatch]);
-  
+  }, [data, loading, dispatch]);
+
   function filterProducts() {
     if (!currentCategory) {
-      // products is now being retrieved from state
       return state.products;
     }
-  
-    return state.products.filter(product => product.category._id === currentCategory);
+
+    return state.products.filter(
+      (product) => product.category._id === currentCategory
+    );
   }
 
   return (
