@@ -37,7 +37,7 @@ Pull requests are reviewed
 ![alt text](images/homepage.png)
 
 ### Deployed URL
-https://deep-thoughts-3510.herokuapp.com/
+https://shop-and-redux.herokuapp.com/
 
 ### Questions
 If you have any questions about opening an issue or the repository itself, please contact me at ajmarrocco@gmail.com. Please visit https://github.com/ajmarrocco for more of my projects!
